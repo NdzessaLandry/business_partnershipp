@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}Tableau de bord — {{ entreprise.raison_sociale }}{% endblock %}
+{% block content %}
+<div class="page-layout">
+  <div class="page-header">
+    <div>
+      <h1>Bonjour, {{ entreprise.raison_sociale }}</h1>
+      <p class="page-meta">
+        <span class="badge-branch">{{ entreprise.get_branche_activite_display }}</span>
+        {% if entreprise.est_locale %}<span class="badge-locale">Locale — {{ entreprise.region }}</span>
+        {% else %}<span class="badge-etranger">Internationale</span>{% endif %}
+      </p>
+    </div>
+    <div class="dashboard-actions">
+      <a href="{% url 'gerer_services' 'besoins' %}" class="btn-outline">
+        <i class="bi bi-sliders"></i> Gérer mes besoins
+      </a>
+      <a href="{% url 'gerer_services' 'offres' %}" class="btn-outline">
+        <i class="bi bi-sliders2"></i> Gérer mes offres
+      </a>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-value">{{ mes_besoins.count }}</span>
+      <span class="stat-label">Besoins définis</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ mes_offres.count }}</span>
+      <span class="stat-label">Offres publiées</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ partenaires|length }}</span>
+      <span class="stat-label">Partenaires identifiés</span>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="dashboard-col">
+      <div class="section-card">
+        <h2 class="section-title"><i class="bi bi-arrow-down-circle"></i> Mes besoins</h2>
+        {% if mes_besoins %}
+          <ul class="service-list">
+            {% for rel in mes_besoins %}
+            <li class="service-item">
+              <span class="service-nom">{{ rel.service.nom_service }}</span>
+              <span class="service-element">{{ rel.service.element }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>Aucun besoin défini.<br><a href="{% url 'gerer_services' 'besoins' %}">Définir mes besoins</a></p>
+          </div>
+        {% endif %}
+      </div>
+      <div class="section-card">
+        <h2 class="section-title"><i class="bi bi-arrow-up-circle"></i> Mes offres</h2>
+        {% if mes_offres %}
+          <ul class="service-list">
+            {% for rel in mes_offres %}
+            <li class="service-item">
+              <span class="service-nom">{{ rel.service.nom_service }}</span>
+              <span class="service-element">{{ rel.service.element }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-megaphone"></i>
+            <p>Aucune offre publiée.<br><a href="{% url 'gerer_services' 'offres' %}">Publier mes offres</a></p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="dashboard-col dashboard-col-wide">
+      <div class="section-card">
+        <h2 class="section-title"><i class="bi bi-diagram-3"></i> Partenaires recommandés</h2>
+        {% if not mes_besoins %}
+          <div class="empty-state empty-state-center">
+            <i class="bi bi-search"></i>
+            <p>Définissez vos besoins pour voir les entreprises susceptibles de vous aider.</p>
+            <a href="{% url 'gerer_services' 'besoins' %}" class="btn-primary">Définir mes besoins</a>
+          </div>
+        {% elif not partenaires %}
+          <div class="empty-state empty-state-center">
+            <i class="bi bi-building-x"></i>
+            <p>Aucune entreprise ne correspond encore à vos besoins.</p>
+          </div>
+        {% else %}
+          <div class="partner-grid">
+            {% for p in partenaires %}
+            <a href="{% url 'fiche_entreprise' p.pk %}" class="partner-card">
+              <div class="partner-header">
+                <div class="partner-avatar">{{ p.raison_sociale|first }}</div>
+                <div>
+                  <div class="partner-name">{{ p.raison_sociale }}</div>
+                  <div class="partner-branch">{{ p.get_branche_activite_display }}</div>
+                </div>
+              </div>
+              <div class="partner-meta">
+                {% if p.est_locale %}<span class="badge-sm">{{ p.region }}</span>
+                {% else %}<span class="badge-sm badge-int">Internationale</span>{% endif %}
+                <span class="partner-match">
+                  <i class="bi bi-stars"></i> {{ p.nb_correspondances }} service{{ p.nb_correspondances|pluralize }} commun{{ p.nb_correspondances|pluralize }}
+                </span>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Tableau de bord — Ministère{% endblock %}
+{% block content %}
+<div class="page-layout">
+  <div class="page-header">
+    <div>
+      <h1>Tableau de bord — Validation des adhésions</h1>
+      <p>Gérez les demandes d'adhésion des entreprises à la plateforme.</p>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item stat-pending">
+      <span class="stat-value">{{ en_attente.count }}</span>
+      <span class="stat-label">En attente</span>
+    </div>
+    <div class="stat-item stat-approved">
+      <span class="stat-value">{{ nb_approuvees }}</span>
+      <span class="stat-label">Approuvées</span>
+    </div>
+    <div class="stat-item stat-rejected">
+      <span class="stat-value">{{ nb_rejetees }}</span>
+      <span class="stat-label">Rejetées</span>
+    </div>
+  </div>
+  <div class="section-card">
+    <h2 class="section-title"><i class="bi bi-clock-history"></i> Demandes en attente de traitement</h2>
+    {% if en_attente %}
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Raison sociale</th>
+            <th>Branche</th>
+            <th>Type</th>
+            <th>Région</th>
+            <th>Date de dépôt</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in en_attente %}
+          <tr>
+            <td><strong>{{ e.raison_sociale }}</strong><br><small>{{ e.email }}</small></td>
+            <td>{{ e.get_branche_activite_display }}</td>
+            <td>{% if e.est_locale %}Locale{% else %}Étrangère{% endif %}</td>
+            <td>{{ e.region|default:"—" }}</td>
+            <td>{{ e.date_inscription|date:"d/m/Y H:i" }}</td>
+            <td>
+              <a href="{% url 'examiner_entreprise' e.pk %}" class="btn-primary-sm">
+                <i class="bi bi-eye"></i> Examiner
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state empty-state-center">
+      <i class="bi bi-check-circle"></i>
+      <p>Aucune demande en attente. Toutes les demandes ont été traitées.</p>
+    </div>
+    {% endif %}
+  </div>
+  <div class="mt-2">
+    <a href="{% url 'liste_entreprises' %}" class="btn-outline">
+      <i class="bi bi-building"></i> Voir toutes les entreprises
+    </a>
+  </div>
+</div>
+{% endblock %}

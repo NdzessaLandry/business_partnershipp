@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Connexion — Business Partnership{% endblock %}
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo-mark"></div>
+      <h1 class="auth-title">Business Partnership</h1>
+      <p class="auth-subtitle">Plateforme de mise en relation des entreprises<br>République du Cameroun — MINEPAT</p>
+    </div>
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Nom d'utilisateur</label>
+        {{ form.username }}
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        {{ form.password }}
+      </div>
+      <button type="submit" class="btn-primary btn-full">
+        <i class="bi bi-arrow-right-circle"></i> Se connecter
+      </button>
+    </form>
+    <div class="auth-footer">
+      Pas encore inscrit ? <a href="{% url 'inscription' %}">Déposer une demande d'adhésion</a>
+    </div>
+  </div>
+  <div class="auth-visual">
+    <div class="auth-visual-content">
+      <p class="auth-tagline">Connectez votre entreprise aux opportunités du marché camerounais</p>
+      <ul class="auth-features">
+        <li><i class="bi bi-check2"></i> Identifiez vos partenaires commerciaux</li>
+        <li><i class="bi bi-check2"></i> Publiez vos offres de services</li>
+        <li><i class="bi bi-check2"></i> Exprimez vos besoins</li>
+        <li><i class="bi bi-check2"></i> Accédez à un réseau national</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

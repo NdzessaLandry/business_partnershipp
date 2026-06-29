@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Entreprises — Ministère{% endblock %}
+{% block content %}
+<div class="page-layout">
+  <div class="page-header">
+    <h1>Entreprises enregistrées</h1>
+    <div class="filter-bar">
+      <a href="{% url 'liste_entreprises' %}" class="btn-filter {% if not statut %}active{% endif %}">Toutes</a>
+      <a href="?statut=EN_ATTENTE" class="btn-filter {% if statut == 'EN_ATTENTE' %}active{% endif %}">En attente</a>
+      <a href="?statut=APPROUVEE" class="btn-filter {% if statut == 'APPROUVEE' %}active{% endif %}">Approuvées</a>
+      <a href="?statut=REJETEE" class="btn-filter {% if statut == 'REJETEE' %}active{% endif %}">Rejetées</a>
+    </div>
+  </div>
+  <div class="section-card">
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr><th>Raison sociale</th><th>Branche</th><th>Type</th><th>Statut</th><th>Date</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          {% for e in entreprises %}
+          <tr>
+            <td><strong>{{ e.raison_sociale }}</strong><br><small>{{ e.email }}</small></td>
+            <td>{{ e.get_branche_activite_display }}</td>
+            <td>{% if e.est_locale %}Locale{% else %}Étrangère{% endif %}</td>
+            <td><span class="status-badge status-{{ e.statut|lower }}">{{ e.get_statut_display }}</span></td>
+            <td>{{ e.date_inscription|date:"d/m/Y" }}</td>
+            <td><a href="{% url 'examiner_entreprise' e.pk %}" class="btn-primary-sm"><i class="bi bi-eye"></i></a></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="6" class="table-empty">Aucune entreprise.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

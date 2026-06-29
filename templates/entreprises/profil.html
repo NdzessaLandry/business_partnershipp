@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Mon profil — Business Partnership{% endblock %}
+{% block content %}
+<div class="page-single">
+  <div class="page-header-simple">
+    <a href="{% url 'dashboard' %}" class="back-link"><i class="bi bi-arrow-left"></i> Retour</a>
+    <h1>Mon profil</h1>
+    <p>Mettez à jour les informations de votre entreprise.</p>
+  </div>
+  <form method="post" class="card-form">
+    {% csrf_token %}
+    <div class="form-section">
+      <div class="form-grid-2">
+        {% for field in form %}
+        <div class="form-group {% if field.name == 'description' %}form-group-full{% endif %}">
+          <label>{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<span class="field-error">{{ field.errors.0 }}</span>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary"><i class="bi bi-floppy"></i> Enregistrer les modifications</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

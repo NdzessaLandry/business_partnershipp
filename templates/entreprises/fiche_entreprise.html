@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}{{ ent.raison_sociale }} — Business Partnership{% endblock %}
+{% block content %}
+<div class="page-single">
+  <a href="{% url 'dashboard' %}" class="back-link"><i class="bi bi-arrow-left"></i> Retour aux résultats</a>
+  <div class="fiche-header">
+    <div class="fiche-avatar">{{ ent.raison_sociale|first }}</div>
+    <div>
+      <h1>{{ ent.raison_sociale }}</h1>
+      <p class="page-meta">
+        <span class="badge-branch">{{ ent.get_branche_activite_display }}</span>
+        {% if ent.est_locale %}<span class="badge-locale">{{ ent.region }}</span>
+        {% else %}<span class="badge-etranger">Internationale</span>{% endif %}
+      </p>
+      {% if ent.description %}<p class="fiche-desc">{{ ent.description }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="fiche-grid">
+    <div class="section-card">
+      <h2 class="section-title"><i class="bi bi-arrow-up-circle"></i> Services offerts</h2>
+      {% if offres %}
+        {% regroup offres by service.nom_service as grouped %}
+        {% for g in grouped %}
+        <div class="service-group">
+          <div class="service-group-title">{{ g.grouper }}</div>
+          {% for rel in g.list %}
+          <div class="service-row-simple">{{ rel.service.element }}</div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      {% else %}<div class="empty-state"><i class="bi bi-inbox"></i><p>Aucune offre déclarée.</p></div>{% endif %}
+    </div>
+    <div class="section-card">
+      <h2 class="section-title"><i class="bi bi-arrow-down-circle"></i> Besoins exprimés</h2>
+      {% if besoins %}
+        {% regroup besoins by service.nom_service as grouped %}
+        {% for g in grouped %}
+        <div class="service-group">
+          <div class="service-group-title">{{ g.grouper }}</div>
+          {% for rel in g.list %}
+          <div class="service-row-simple">{{ rel.service.element }}</div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      {% else %}<div class="empty-state"><i class="bi bi-inbox"></i><p>Aucun besoin déclaré.</p></div>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

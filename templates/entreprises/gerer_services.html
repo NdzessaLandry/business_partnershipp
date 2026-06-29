@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}Mes {{ label }} — Business Partnership{% endblock %}
+{% block content %}
+<div class="page-layout">
+  <div class="page-header">
+    <div>
+      <a href="{% url 'dashboard' %}" class="back-link"><i class="bi bi-arrow-left"></i> Retour</a>
+      <h1>{% if est_besoin %}Mes besoins{% else %}Mes offres{% endif %}</h1>
+      <p>{% if est_besoin %}Sélectionnez les services dont votre entreprise a besoin.{% else %}Déclarez les services que votre entreprise propose.{% endif %}</p>
+    </div>
+  </div>
+
+  <div class="services-layout">
+    <div class="services-form-col">
+      <div class="section-card">
+        <h2 class="section-title">
+          <i class="bi bi-plus-circle"></i>
+          {% if est_besoin %}Ajouter un besoin{% else %}Ajouter une offre{% endif %}
+        </h2>
+        <form method="post" action="{% url 'enregistrer_service' %}" id="service-form">
+          {% csrf_token %}
+          <input type="hidden" name="type_relation" value="{% if est_besoin %}besoin{% else %}offre{% endif %}">
+          <div class="form-group">
+            <label>Service</label>
+            <select name="nom_service" id="nom_service_select" class="form-control">
+              <option value="">-- Choisir un service --</option>
+            </select>
+          </div>
+          <div class="form-group" id="elements-wrapper" style="display:none">
+            <label>Éléments du service</label>
+            <div id="elements-list" class="checkbox-grid"></div>
+          </div>
+          <button type="submit" class="btn-primary" id="btn-enregistrer" style="display:none">
+            <i class="bi bi-floppy"></i> Enregistrer
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="services-current-col">
+      <div class="section-card">
+        <h2 class="section-title">
+          <i class="bi bi-list-check"></i>
+          {% if est_besoin %}Besoins enregistrés{% else %}Offres enregistrées{% endif %}
+          <span class="count-badge">{{ relations_actuelles.count }}</span>
+        </h2>
+        {% if relations_actuelles %}
+          {% regroup relations_actuelles by service.nom_service as grouped %}
+          {% for group in grouped %}
+          <div class="service-group">
+            <div class="service-group-title">{{ group.grouper }}</div>
+            {% for rel in group.list %}
+            <div class="service-row">
+              <span>{{ rel.service.element }}</span>
+              <a href="{% url 'supprimer_service' rel.pk %}" class="btn-danger-sm" onclick="return confirm('Supprimer cet élément ?')">
+                <i class="bi bi-trash3"></i>
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>Aucun élément enregistré pour le moment.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% block extra_js %}
+<script>
+const API_URL = "{% url 'api_elements_service' %}";
+const select = document.getElementById('nom_service_select');
+const wrapper = document.getElementById('elements-wrapper');
+const list = document.getElementById('elements-list');
+const btn = document.getElementById('btn-enregistrer');
+
+// Charger les noms de services
+fetch(API_URL + '?nom_service=__ALL__')
+  .then(r => r.json()).catch(() => ({}));
+
+// Peupler le select via l'API
+fetch('/api/services-noms/')
+  .catch(() => {});
+
+// Utiliser l'endpoint existant : récupérer les noms distincts
+async function loadServiceNames() {
+  // On va charger via un premier appel vide qui retourne []
+  // Les noms sont injectés directement depuis Django
+  const names = {{ service_names|default:"[]"|safe }};
+  names.forEach(n => {
+    const opt = document.createElement('option');
+    opt.value = n; opt.textContent = n;
+    select.appendChild(opt);
+  });
+}
+
+select.addEventListener('change', async () => {
+  const nom = select.value;
+  if (!nom) { wrapper.style.display = 'none'; btn.style.display = 'none'; return; }
+  const r = await fetch(API_URL + '?nom_service=' + encodeURIComponent(nom));
+  const data = await r.json();
+  list.innerHTML = '';
+  data.elements.forEach(el => {
+    const label = document.createElement('label');
+    label.className = 'checkbox-item';
+    label.innerHTML = `<input type="checkbox" name="elements" value="${el.id}"> <span>${el.element}</span>`;
+    if (el.description) {
+      const desc = document.createElement('small');
+      desc.className = 'checkbox-desc';
+      desc.textContent = el.description;
+      label.appendChild(desc);
+    }
+    list.appendChild(label);
+  });
+  wrapper.style.display = data.elements.length ? 'block' : 'none';
+  btn.style.display = data.elements.length ? 'inline-flex' : 'none';
+});
+
+loadServiceNames();
+</script>
+{% endblock %}
+{% endblock %}
