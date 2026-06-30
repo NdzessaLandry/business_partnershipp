@@ -42,7 +42,7 @@ class Entreprise(AbstractUser):
     motif_rejet = models.TextField(blank=True, null=True)
     doc_registre_commerce = models.FileField(upload_to='documents/')
     doc_contribuable = models.FileField(upload_to='documents/')
-    doc_autre = models.FileField(upload_to='documents/')
+    doc_autre = models.FileField(upload_to='documents/', blank=True, null=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'raison_sociale']

@@ -15,7 +15,7 @@ class InscriptionForm(UserCreationForm):
     branche_activite = forms.ChoiceField(choices=[('', '-- Sélectionner --')] + BRANCHES_ACTIVITE, label="Branche d'activité")
     doc_registre_commerce = forms.FileField(label="Registre de commerce")
     doc_contribuable = forms.FileField(label="Carte de contribuable")
-    doc_autre = forms.FileField(label="Document complémentaire")
+    doc_autre = forms.FileField(label="Document complémentaire (facultatif)", required=False)
 
     class Meta:
         model = Entreprise

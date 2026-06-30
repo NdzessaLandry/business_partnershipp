@@ -24,9 +24,15 @@
         <li><a href="{{ entreprise.doc_contribuable.url }}" target="_blank" class="doc-link">
           <i class="bi bi-file-pdf"></i> Carte de contribuable
         </a></li>
+        {% if entreprise.doc_autre %}
         <li><a href="{{ entreprise.doc_autre.url }}" target="_blank" class="doc-link">
           <i class="bi bi-file-pdf"></i> Document complémentaire
         </a></li>
+        {% else %}
+        <li class="doc-link-absent">
+          <i class="bi bi-dash-circle"></i> Aucun document complémentaire fourni
+        </li>
+        {% endif %}
       </ul>
     </div>
     <div class="section-card">
