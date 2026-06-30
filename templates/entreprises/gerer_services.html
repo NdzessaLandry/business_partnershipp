@@ -76,47 +76,55 @@ const select = document.getElementById('nom_service_select');
 const wrapper = document.getElementById('elements-wrapper');
 const list = document.getElementById('elements-list');
 const btn = document.getElementById('btn-enregistrer');
+const form = document.getElementById('service-form');
 
-// Charger les noms de services
-fetch(API_URL + '?nom_service=__ALL__')
-  .then(r => r.json()).catch(() => ({}));
-
-// Peupler le select via l'API
-fetch('/api/services-noms/')
-  .catch(() => {});
-
-// Utiliser l'endpoint existant : récupérer les noms distincts
-async function loadServiceNames() {
-  // On va charger via un premier appel vide qui retourne []
-  // Les noms sont injectés directement depuis Django
+function loadServiceNames() {
   const names = {{ service_names|default:"[]"|safe }};
   names.forEach(n => {
     const opt = document.createElement('option');
-    opt.value = n; opt.textContent = n;
+    opt.value = n;
+    opt.textContent = n;
     select.appendChild(opt);
   });
 }
 
 select.addEventListener('change', async () => {
   const nom = select.value;
-  if (!nom) { wrapper.style.display = 'none'; btn.style.display = 'none'; return; }
-  const r = await fetch(API_URL + '?nom_service=' + encodeURIComponent(nom));
-  const data = await r.json();
-  list.innerHTML = '';
-  data.elements.forEach(el => {
-    const label = document.createElement('label');
-    label.className = 'checkbox-item';
-    label.innerHTML = `<input type="checkbox" name="elements" value="${el.id}"> <span>${el.element}</span>`;
-    if (el.description) {
-      const desc = document.createElement('small');
-      desc.className = 'checkbox-desc';
-      desc.textContent = el.description;
-      label.appendChild(desc);
-    }
-    list.appendChild(label);
-  });
-  wrapper.style.display = data.elements.length ? 'block' : 'none';
-  btn.style.display = data.elements.length ? 'inline-flex' : 'none';
+  if (!nom) {
+    wrapper.style.display = 'none';
+    btn.style.display = 'none';
+    list.innerHTML = '';
+    return;
+  }
+  try {
+    const r = await fetch(API_URL + '?nom_service=' + encodeURIComponent(nom));
+    const data = await r.json();
+    list.innerHTML = '';
+    data.elements.forEach(el => {
+      const label = document.createElement('label');
+      label.className = 'checkbox-item';
+      label.innerHTML = `<input type="checkbox" name="elements" value="${el.id}"> <span>${el.element}</span>`;
+      if (el.description) {
+        const desc = document.createElement('small');
+        desc.className = 'checkbox-desc';
+        desc.textContent = el.description;
+        label.appendChild(desc);
+      }
+      list.appendChild(label);
+    });
+    wrapper.style.display = data.elements.length ? 'block' : 'none';
+    btn.style.display = data.elements.length ? 'inline-flex' : 'none';
+  } catch (err) {
+    console.error('Erreur de chargement des éléments du service :', err);
+  }
+});
+
+form.addEventListener('submit', (e) => {
+  const checked = list.querySelectorAll('input[name="elements"]:checked');
+  if (checked.length === 0) {
+    e.preventDefault();
+    alert("Veuillez sélectionner au moins un élément du service avant d'enregistrer.");
+  }
 });
 
 loadServiceNames();

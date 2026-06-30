@@ -13,6 +13,9 @@
         {% else %}<span class="badge-etranger">Internationale</span>{% endif %}
       </p>
       {% if ent.description %}<p class="fiche-desc">{{ ent.description }}</p>{% endif %}
+      <a href="mailto:{{ ent.email }}" class="fiche-contact-email">
+        <i class="bi bi-envelope"></i> {{ ent.email }}
+      </a>
     </div>
   </div>
   <div class="fiche-grid">
