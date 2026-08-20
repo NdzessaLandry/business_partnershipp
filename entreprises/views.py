@@ -7,6 +7,12 @@ from django.http import JsonResponse
 from django.db.models import Count, Q
 from .models import Entreprise, Service, BesoinOffreEntreprise
 from .forms import InscriptionForm, ConnexionForm, ProfilForm
+from django.contrib.auth.views import PasswordResetView
+from django.core.mail import EmailMessage
+from django.template import loader
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
 
 
 def inscription(request):
@@ -136,3 +142,26 @@ def api_elements_service(request):
     nom = request.GET.get('nom_service', '')
     elements = list(Service.objects.filter(nom_service=nom).values('id', 'element', 'description'))
     return JsonResponse({'elements': elements})
+
+class PasswordResetViewCorrigee(PasswordResetView):
+    """
+    Surcharge PasswordResetView pour envoyer l'email en encodage
+    7bit strict, évitant la troncature quoted-printable du token.
+    """
+    def send_mail(self, subject_template_name, email_template_name,
+                  context, from_email, to_email, html_email_template_name=None):
+
+        subject = loader.render_to_string(subject_template_name, context)
+        subject = ''.join(subject.splitlines())
+
+        body = loader.render_to_string(email_template_name, context)
+
+        email = EmailMessage(
+            subject=subject,
+            body=body,
+            from_email=from_email,
+            to=[to_email],
+        )
+        # Forcer l'encodage 7bit : aucun caractère ne sera transformé
+        email.encoding = 'ascii'
+        email.send()
