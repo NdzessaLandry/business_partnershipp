@@ -32,6 +32,7 @@ BRANCHES_ACTIVITE = [
 class Entreprise(AbstractUser):
     raison_sociale = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
+    telephone=models.CharField(max_length=20, null=True, blank=True)
     est_locale = models.BooleanField(default=True)
     region = models.CharField(max_length=50, choices=REGIONS_CAMEROUN, blank=True, null=True)
     branche_activite = models.CharField(max_length=50, choices=BRANCHES_ACTIVITE, blank=True, null=True)

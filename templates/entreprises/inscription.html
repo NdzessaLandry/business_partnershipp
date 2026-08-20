@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Inscription — Business Partnership{% endblock %}
+{% block title %}Inscription Business Partnership{% endblock %}
 {% block content %}
 <div class="page-single">
   <div class="page-header-simple">
@@ -34,7 +34,7 @@
     </div>
     <div class="form-section">
       <h2 class="form-section-title"><i class="bi bi-person-lock"></i> Informations de connexion</h2>
-      <div class="form-grid-2">
+      <div class="form-grid-3">
         <div class="form-group">
           <label>Nom d'utilisateur <span class="required">*</span></label>
           {{ form.username }}
@@ -43,6 +43,11 @@
         <div class="form-group">
           <label>Adresse email <span class="required">*</span></label>
           {{ form.email }}
+        </div>
+        <div class="form-group">
+          <label>Téléphone <span class="required">*</span></label>
+          {{ form.telephone }}
+          {% if form.telephone.errors %}<span class="field-error">{{ form.telephone.errors.0 }}</span>{% endif %}
         </div>
         <div class="form-group">
           <label>Mot de passe <span class="required">*</span></label>

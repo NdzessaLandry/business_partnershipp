@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Tableau de bord — {{ entreprise.raison_sociale }}{% endblock %}
+{% block title %}Tableau de bord {{ entreprise.raison_sociale }}{% endblock %}
 {% block content %}
 <div class="page-layout">
   <div class="page-header">
@@ -7,7 +7,7 @@
       <h1>Bonjour, {{ entreprise.raison_sociale }}</h1>
       <p class="page-meta">
         <span class="badge-branch">{{ entreprise.get_branche_activite_display }}</span>
-        {% if entreprise.est_locale %}<span class="badge-locale">Locale — {{ entreprise.region }}</span>
+        {% if entreprise.est_locale %}<span class="badge-locale">Locale {{ entreprise.region }}</span>
         {% else %}<span class="badge-etranger">Internationale</span>{% endif %}
       </p>
     </div>
@@ -100,6 +100,7 @@
                   <div class="partner-name">{{ p.raison_sociale }}</div>
                   <div class="partner-branch">{{ p.get_branche_activite_display }}</div>
                   <div class="partner-email"><i class="bi bi-envelope"></i> {{ p.email }}</div>
+                  
                 </div>
               </div>
               <div class="partner-meta">

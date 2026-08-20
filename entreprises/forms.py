@@ -6,6 +6,7 @@ from .models import Entreprise, BesoinOffreEntreprise, Service, REGIONS_CAMEROUN
 class InscriptionForm(UserCreationForm):
     raison_sociale = forms.CharField(max_length=255, label="Raison sociale")
     email = forms.EmailField(label="Adresse email")
+    telephone=forms.CharField(max_length=20,label="Numéro whatsapp")
     est_locale = forms.ChoiceField(
         choices=[('True', 'Locale (Cameroun)'), ('False', 'Étrangère')],
         label="Caractère de l'entreprise",
@@ -19,7 +20,7 @@ class InscriptionForm(UserCreationForm):
 
     class Meta:
         model = Entreprise
-        fields = ['username', 'raison_sociale', 'email', 'password1', 'password2',
+        fields = ['username', 'raison_sociale', 'email','telephone', 'password1', 'password2',
                   'est_locale', 'region', 'branche_activite',
                   'doc_registre_commerce', 'doc_contribuable', 'doc_autre']
 
@@ -47,7 +48,7 @@ class ConnexionForm(AuthenticationForm):
 class ProfilForm(forms.ModelForm):
     class Meta:
         model = Entreprise
-        fields = ['raison_sociale', 'email', 'est_locale', 'region', 'branche_activite', 'description']
+        fields = ['raison_sociale', 'email','telephone', 'est_locale', 'region', 'branche_activite', 'description']
         widgets = {'description': forms.Textarea(attrs={'rows': 4})}
 
 
