@@ -21,7 +21,11 @@
       <button type="submit" class="btn-primary btn-full">
   <i class="bi bi-arrow-right-circle"></i> Se connecter
 </button>
-
+<div class="forgot-link">
+  <a href="{% url 'password_reset' %}">
+    <i class="bi bi-key"></i> Identifiant ou mot de passe oublié ?
+  </a>
+</div>
     </form>
     <div class="auth-footer">
       <p>Pas encore inscrit ? <a href="{% url 'inscription' %}">Déposer une demande d'adhésion</a>

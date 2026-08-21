@@ -1,11 +1,14 @@
 from pathlib import Path
 import os
 
+from dotenv import load_dotenv
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-change-this-in-production-bp2025'
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*']
+load_dotenv(BASE_DIR / '.env')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -79,6 +82,17 @@ AUTH_USER_MODEL = 'entreprises.Entreprise'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_HASHING_ALGORITHM = 'sha256'
 APPEND_SLASH = True
+
+EMAIL_BACKEND       = 'entreprises.email_backend.SSLEmailBackend'
+EMAIL_USE_SSL       = True
+EMAIL_USE_TLS       = False
+EMAIL_HOST          = 'smtp.gmail.com'
+EMAIL_PORT          = 465
+EMAIL_HOST_USER     = os.getenv('EMAIL_HOST_USER')
+print(f"EMAIL_HOST_USER: {EMAIL_HOST_USER}")  # Debug print to check the value
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+print(f"EMAIL_HOST_PASSWORD: {EMAIL_HOST_PASSWORD}")  # Debug print to check the value
+DEFAULT_FROM_EMAIL  = 'Business Partnership MINEPAT <supportbusinesspartnership@gmail.com>'
+EMAIL_TIMEOUT       = 30
